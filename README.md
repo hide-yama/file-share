@@ -5,8 +5,15 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
 ![Supabase](https://img.shields.io/badge/Supabase-Backend-green?style=flat-square&logo=supabase)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat-square&logo=tailwind-css)
+![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?style=flat-square&logo=vercel)
 
 **AGERUYO**は、美しいモダンUIと強力なセキュリティ機能を備えた次世代の大容量ファイル共有サービスです。
+
+## 🌐 ライブデモ
+
+**本番環境**: [https://ageruyo.vercel.app](https://ageruyo.vercel.app)
+
+> 💡 実際のサービスをお試しいただけます！
 
 ## ✨ 主な機能
 
@@ -255,7 +262,7 @@ Vercelダッシュボードで以下を設定:
 
 ## 📞 サポート
 
-問題や質問がございましたら、[Issues](https://github.com/your-username/ageruyo/issues)でお知らせください。
+問題や質問がございましたら、[Issues](https://github.com/hide-yama/file-share/issues)でお知らせください。
 
 ---
 
@@ -263,7 +270,8 @@ Vercelダッシュボードで以下を設定:
 
 **AGERUYO** - 次世代の大容量ファイル共有体験
 
-[![GitHub stars](https://img.shields.io/github/stars/your-username/ageruyo?style=social)](https://github.com/your-username/ageruyo/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/your-username/ageruyo?style=social)](https://github.com/your-username/ageruyo/network)
+[![GitHub stars](https://img.shields.io/github/stars/hide-yama/file-share?style=social)](https://github.com/hide-yama/file-share/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/hide-yama/file-share?style=social)](https://github.com/hide-yama/file-share/network)
+[![Vercel Deploy](https://img.shields.io/badge/Deploy-Live-brightgreen?style=social&logo=vercel)](https://ageruyo.vercel.app)
 
 </div>
