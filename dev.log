@@ -1,0 +1,87 @@
+
+> file-share-app@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.3.3 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://10.18.198.160:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 868ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1484ms
+ GET / 200 in 1802ms
+ GET / 200 in 80ms
+ ✓ Compiled /favicon.ico in 271ms
+ GET /favicon.ico?favicon.45db1c09.ico 200 in 520ms
+ GET / 200 in 152ms
+ GET /favicon.ico?favicon.45db1c09.ico 200 in 233ms
+ ✓ Compiled /upload in 483ms
+ GET /upload 200 in 504ms
+ ✓ Compiled /api/upload in 371ms
+ ⨯ TypeError: Invalid URL
+    at new SupabaseClient (../../src/SupabaseClient.ts:79:20)
+    at createClient (../../src/index.ts:40:9)
+    at [project]/lib/supabase.ts [app-route] (ecmascript) (lib/supabase.ts:11:37)
+    at [project]/app/api/upload/route.ts [app-route] (ecmascript) (app/api/upload/route.ts:2:0)
+    at Object.<anonymous> (.next/server/app/api/upload/route.js:11:9)
+   9 | }
+  10 |
+> 11 | export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+     |                                     ^
+  12 |
+  13 | export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
+  14 |   auth: { {
+  code: 'ERR_INVALID_URL',
+  input: 'your_supabase_url/',
+  page: '/api/upload'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 575ms
+ POST /api/upload 500 in 1206ms
+   Reload env: .env.local
+ GET /upload 200 in 188ms
+ GET / 200 in 190ms
+   Reload env: .env.local
+ GET /upload 200 in 194ms
+ GET / 200 in 200ms
+   Reload env: .env.local
+ GET /upload 200 in 266ms
+ GET / 200 in 269ms
+ GET / 200 in 226ms
+ GET /upload 200 in 72ms
+ POST /api/upload 200 in 4201ms
+ ○ Compiling /upload/success ...
+ ✓ Compiled /upload/success in 576ms
+ GET /upload/success?data=%7B%22projectId%22%3A%2260fcd362-e1d1-4d2c-a0ed-dd8cd8449426%22%2C%22password%22%3A%2201WdK4MWcgBD%22%2C%22shareUrl%22%3A%22http%3A%2F%2Flocalhost%3A3000%2Fshare%2F60fcd362-e1d1-4d2c-a0ed-dd8cd8449426%22%2C%22expiresAt%22%3A%222025-06-20T04%3A52%3A23.196Z%22%2C%22files%22%3A%5B%7B%22name%22%3A%22IMG_7879.jpg%22%2C%22size%22%3A2150516%2C%22url%22%3A%22%2Fapi%2Fdownload%2F60fcd362-e1d1-4d2c-a0ed-dd8cd8449426%2FIMG_7879.jpg%22%7D%5D%7D 200 in 602ms
+ ✓ Compiled /_not-found/page in 399ms
+ GET /share/60fcd362-e1d1-4d2c-a0ed-dd8cd8449426 404 in 451ms
+ GET / 200 in 55ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 55ms
+ ✓ Compiled /share in 463ms
+ GET /share 200 in 496ms
+ GET /upload 200 in 42ms
+ GET / 200 in 54ms
+ GET /upload 200 in 56ms
+File upload error: {
+  statusCode: '400',
+  error: 'InvalidKey',
+  message: 'Invalid key: bf24f286-50a9-48fa-8666-46ff1ea01df5/名刺_裏.jpg'
+}
+ POST /api/upload 500 in 2624ms
+File upload error: {
+  statusCode: '400',
+  error: 'InvalidKey',
+  message: 'Invalid key: a8384cfb-1a9b-4a89-a1cd-4c5b5ff14a7c/名刺_裏.jpg'
+}
+ POST /api/upload 500 in 1918ms
+ GET / 200 in 124ms
+ GET /upload 200 in 43ms
+File upload error: {
+  statusCode: '400',
+  error: 'InvalidKey',
+  message: 'Invalid key: 3a4fa904-af56-420f-9346-106a9e418df4/名刺_表.jpg'
+}
+ POST /api/upload 500 in 1611ms
+[?25h
