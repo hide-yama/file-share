@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Share2, Upload, Sparkles, MessageSquare } from 'lucide-react';
+import { Share2, Upload, Home, MessageSquare } from 'lucide-react';
 
 export default function Header() {
   return (
@@ -18,27 +18,30 @@ export default function Header() {
             </span>
           </Link>
           
-          <nav className="flex items-center space-x-2 sm:space-x-4">
+          <nav className="flex items-center space-x-1 sm:space-x-3">
             <Link 
               href="/" 
-              className="group flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 transition-all duration-200 hover:bg-purple-50"
+              className="group flex items-center space-x-2 p-2 sm:px-4 sm:py-2 rounded-lg text-gray-700 hover:text-purple-600 transition-all duration-200 hover:bg-purple-50"
+              title="ホーム"
             >
-              <Sparkles className="h-4 w-4" />
-              <span className="font-medium text-sm sm:text-base">ホーム</span>
+              <Home className="h-5 w-5" />
+              <span className="hidden sm:inline font-medium text-base">ホーム</span>
             </Link>
             <Link 
               href="/text" 
-              className="group flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg text-gray-700 hover:text-purple-600 transition-all duration-200 hover:bg-purple-50"
+              className="group flex items-center space-x-2 p-2 sm:px-4 sm:py-2 rounded-lg text-gray-700 hover:text-purple-600 transition-all duration-200 hover:bg-purple-50"
+              title="テキスト"
             >
-              <MessageSquare className="h-4 w-4" />
-              <span className="font-medium text-sm sm:text-base">テキスト</span>
+              <MessageSquare className="h-5 w-5" />
+              <span className="hidden sm:inline font-medium text-base">テキスト</span>
             </Link>
             <Link 
               href="/upload" 
-              className="group flex items-center space-x-1 sm:space-x-2 px-3 sm:px-5 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+              className="group flex items-center space-x-2 p-2 sm:px-5 sm:py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+              title="アップロード"
             >
-              <Upload className="h-4 w-4" />
-              <span className="text-sm sm:text-base">アップロード</span>
+              <Upload className="h-5 w-5" />
+              <span className="hidden sm:inline text-base">アップロード</span>
             </Link>
           </nav>
         </div>
