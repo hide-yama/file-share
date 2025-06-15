@@ -258,15 +258,15 @@ export default function TextSharePage() {
       <Header />
       <div className="min-h-screen pt-20 px-4 py-12 bg-gradient-to-br from-purple-50 via-pink-50 to-white">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-md">
-                <MessageSquare className="h-4 w-4 mr-2 text-purple-600" />
-                <span className="text-sm font-medium">ルームID: {roomId}</span>
+          <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="flex items-center px-3 sm:px-4 py-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-md flex-1 sm:flex-initial">
+                <MessageSquare className="h-4 w-4 mr-2 text-purple-600 flex-shrink-0" />
+                <span className="text-sm font-medium truncate">ルームID: {roomId}</span>
               </div>
               <button
                 onClick={copyRoomId}
-                className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-md hover:shadow-lg transition-all"
+                className="p-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-md hover:shadow-lg transition-all flex-shrink-0"
                 title={copied ? 'コピーしました' : 'ルームIDをコピー'}
               >
                 {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4 text-gray-600" />}
@@ -274,7 +274,7 @@ export default function TextSharePage() {
             </div>
             <button
               onClick={() => setIsInRoom(false)}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
+              className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
             >
               退室
             </button>
