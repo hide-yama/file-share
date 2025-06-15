@@ -1,20 +1,26 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { MessageSquare, Users, Copy, Check } from 'lucide-react';
 import Header from '@/components/Header';
 import { createBrowserClient } from '@/lib/supabase-client';
 
+interface TextRoom {
+  id: string;
+  room_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export default function TextSharePage() {
-  const router = useRouter();
   const [roomId, setRoomId] = useState('');
   const [content, setContent] = useState('');
   const [isInRoom, setIsInRoom] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
-  const [currentRoom, setCurrentRoom] = useState<any>(null);
+  const [currentRoom, setCurrentRoom] = useState<TextRoom | null>(null);
   const supabase = createBrowserClient();
 
   // Generate random room ID (12 characters for better uniqueness)
@@ -47,7 +53,7 @@ export default function TextSharePage() {
       setIsCreating(false);
       setIsInRoom(true);
       setCurrentRoom(data);
-    } catch (err) {
+    } catch {
       setError('ルームの作成に失敗しました');
     }
   };
@@ -69,7 +75,7 @@ export default function TextSharePage() {
       setContent(data.content || '');
       setIsInRoom(true);
       setCurrentRoom(data);
-    } catch (err) {
+    } catch {
       setError('ルームへの参加に失敗しました');
     }
   };
@@ -83,8 +89,8 @@ export default function TextSharePage() {
         .from('text_rooms')
         .update({ content: newContent, updated_at: new Date().toISOString() })
         .eq('room_id', roomId);
-    } catch (err) {
-      console.error('Failed to update content:', err);
+    } catch (error) {
+      console.error('Failed to update content:', error);
     }
   }, [currentRoom, roomId, supabase]);
 
@@ -103,8 +109,8 @@ export default function TextSharePage() {
           filter: `room_id=eq.${roomId}`
         },
         (payload) => {
-          if (payload.new && payload.new.content !== content) {
-            setContent(payload.new.content);
+          if (payload.new && typeof payload.new === 'object' && 'content' in payload.new && payload.new.content !== content) {
+            setContent(payload.new.content as string);
           }
         }
       )
@@ -113,7 +119,7 @@ export default function TextSharePage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [isInRoom, roomId, supabase]);
+  }, [isInRoom, roomId, supabase, content]);
 
   // Copy room ID to clipboard
   const copyRoomId = () => {
