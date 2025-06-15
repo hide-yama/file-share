@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { MessageSquare, Users, Copy, Check } from 'lucide-react';
+import { MessageSquare, Users, Copy, Check, RefreshCw } from 'lucide-react';
 import Header from '@/components/Header';
 import { createBrowserClient } from '@/lib/supabase-client';
 
@@ -20,6 +20,8 @@ export default function TextSharePage() {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [currentRoom, setCurrentRoom] = useState<TextRoom | null>(null);
   const supabase = createBrowserClient();
 
@@ -75,8 +77,40 @@ export default function TextSharePage() {
       setContent(data.content || '');
       setIsInRoom(true);
       setCurrentRoom(data);
+      setLastUpdated(new Date());
     } catch {
       setError('ルームへの参加に失敗しました');
+    }
+  };
+
+  // Manual refresh function
+  const refreshContent = async () => {
+    if (!roomId || !currentRoom) return;
+
+    setIsRefreshing(true);
+    try {
+      const { data, error } = await supabase
+        .from('text_rooms')
+        .select('*')
+        .eq('room_id', roomId)
+        .single();
+
+      if (error || !data) {
+        setError('最新データの取得に失敗しました');
+        return;
+      }
+
+      // Only update if content has changed
+      if (data.content !== content) {
+        setContent(data.content || '');
+        setCurrentRoom(data);
+      }
+      setLastUpdated(new Date());
+      setError(''); // Clear any previous errors
+    } catch {
+      setError('最新データの取得に失敗しました');
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -111,6 +145,7 @@ export default function TextSharePage() {
         (payload) => {
           if (payload.new && typeof payload.new === 'object' && 'content' in payload.new && payload.new.content !== content) {
             setContent(payload.new.content as string);
+            setLastUpdated(new Date());
           }
         }
       )
@@ -126,6 +161,16 @@ export default function TextSharePage() {
     navigator.clipboard.writeText(roomId);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Format last updated time
+  const formatLastUpdated = (date: Date | null) => {
+    if (!date) return '';
+    return date.toLocaleTimeString('ja-JP', { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit' 
+    });
   };
 
   if (!isInRoom) {
@@ -245,9 +290,24 @@ export default function TextSharePage() {
               placeholder="ここにテキストを入力すると、同じルームの全員にリアルタイムで共有されます..."
               className="w-full h-96 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent resize-none"
             />
-            <div className="mt-4 text-sm text-gray-600">
-              <Users className="inline h-4 w-4 mr-1" />
-              このルームで編集中
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                <Users className="inline h-4 w-4 mr-1" />
+                このルームで編集中
+                {lastUpdated && (
+                  <span className="ml-4 text-xs text-gray-500">
+                    最終更新: {formatLastUpdated(lastUpdated)}
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={refreshContent}
+                disabled={isRefreshing}
+                className="flex items-center px-3 py-2 text-sm bg-white/60 backdrop-blur-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 hover:bg-white/80 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? '更新中...' : '最新に更新'}
+              </button>
             </div>
           </div>
         </div>
