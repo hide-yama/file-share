@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Share2, Upload, Home, MessageSquare } from 'lucide-react';
+import { Share2, Upload, MessageSquare } from 'lucide-react';
 
 export default function Header() {
   return (
@@ -19,14 +19,6 @@ export default function Header() {
           </Link>
           
           <nav className="flex items-center space-x-1 sm:space-x-3">
-            <Link 
-              href="/" 
-              className="group flex items-center space-x-2 p-2 sm:px-4 sm:py-2 rounded-lg text-gray-700 hover:text-purple-600 transition-all duration-200 hover:bg-purple-50"
-              title="ホーム"
-            >
-              <Home className="h-5 w-5" />
-              <span className="hidden sm:inline font-medium text-base">ホーム</span>
-            </Link>
             <Link 
               href="/text" 
               className="group flex items-center space-x-2 p-2 sm:px-4 sm:py-2 rounded-lg text-gray-700 hover:text-purple-600 transition-all duration-200 hover:bg-purple-50"
