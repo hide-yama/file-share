@@ -258,11 +258,11 @@ export default function TextSharePage() {
       <Header />
       <div className="min-h-screen pt-20 px-4 py-12 bg-gradient-to-br from-purple-50 via-pink-50 to-white">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="flex items-center px-3 sm:px-4 py-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-md flex-1 sm:flex-initial">
+          <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center justify-center sm:justify-start space-x-2">
+              <div className="flex items-center px-3 sm:px-4 py-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-md">
                 <MessageSquare className="h-4 w-4 mr-2 text-purple-600 flex-shrink-0" />
-                <span className="text-sm font-medium truncate">ルームID: {roomId}</span>
+                <span className="text-sm font-medium">ルームID: {roomId}</span>
               </div>
               <button
                 onClick={copyRoomId}
@@ -272,12 +272,14 @@ export default function TextSharePage() {
                 {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4 text-gray-600" />}
               </button>
             </div>
-            <button
-              onClick={() => setIsInRoom(false)}
-              className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
-            >
-              退室
-            </button>
+            <div className="flex justify-center sm:justify-end">
+              <button
+                onClick={() => setIsInRoom(false)}
+                className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all text-sm font-medium"
+              >
+                退室
+              </button>
+            </div>
           </div>
 
           <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8">
