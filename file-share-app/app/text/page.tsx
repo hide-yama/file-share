@@ -20,6 +20,7 @@ export default function TextSharePage() {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [contentCopied, setContentCopied] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [currentRoom, setCurrentRoom] = useState<TextRoom | null>(null);
@@ -163,6 +164,13 @@ export default function TextSharePage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Copy text content to clipboard
+  const copyContent = () => {
+    navigator.clipboard.writeText(content);
+    setContentCopied(true);
+    setTimeout(() => setContentCopied(false), 2000);
+  };
+
   // Format last updated time
   const formatLastUpdated = (date: Date | null) => {
     if (!date) return '';
@@ -281,15 +289,33 @@ export default function TextSharePage() {
           </div>
 
           <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8">
-            <textarea
-              value={content}
-              onChange={(e) => {
-                setContent(e.target.value);
-                updateContent(e.target.value);
-              }}
-              placeholder="ここにテキストを入力すると、同じルームの全員にリアルタイムで共有されます..."
-              className="w-full h-96 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none"
-            />
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-700">
+                  共有テキスト
+                </label>
+                <button
+                  onClick={copyContent}
+                  disabled={!content}
+                  className="flex items-center gap-2 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  title={contentCopied ? 'コピーしました' : 'テキストをコピー'}
+                >
+                  {contentCopied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4 text-gray-600" />}
+                  <span className="text-gray-600">
+                    {contentCopied ? 'コピーしました' : 'コピー'}
+                  </span>
+                </button>
+              </div>
+              <textarea
+                value={content}
+                onChange={(e) => {
+                  setContent(e.target.value);
+                  updateContent(e.target.value);
+                }}
+                placeholder="ここにテキストを入力すると、同じルームの全員にリアルタイムで共有されます..."
+                className="w-full h-96 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none"
+              />
+            </div>
             <div className="mt-4 flex items-center justify-between">
               <div className="text-sm text-gray-600">
                 <Users className="inline h-4 w-4 mr-1" />
