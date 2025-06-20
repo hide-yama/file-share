@@ -119,10 +119,10 @@ export default function UploadPage() {
             <Cloud className="h-4 w-4 mr-2" />
             ドラッグ&ドロップでかんたんアップロード
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-xl sm:text-3xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
             ファイルをアップロード
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
             最大2GBまでのファイルを安全に共有できます
           </p>
         </div>
