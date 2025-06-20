@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Upload, Shield, Clock, Zap, Lock, MessageSquare, FileText, Users } from 'lucide-react';
+import { Upload, Shield, Clock, Zap, MessageSquare, FileText, Users } from 'lucide-react';
 
 export default function Home() {
   return (
