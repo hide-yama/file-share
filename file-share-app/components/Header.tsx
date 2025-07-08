@@ -22,18 +22,18 @@ export default function Header() {
             <Link 
               href="/text" 
               className="group flex items-center space-x-2 p-2 sm:px-5 sm:py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
-              title="テキスト"
+              title="ニュース"
             >
               <MessageSquare className="h-5 w-5" />
-              <span className="hidden sm:inline text-base">テキスト</span>
+              <span className="hidden sm:inline text-base">ニュース</span>
             </Link>
             <Link 
               href="/upload" 
               className="group flex items-center space-x-2 p-2 sm:px-5 sm:py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
-              title="アップロード"
+              title="投稿"
             >
               <Upload className="h-5 w-5" />
-              <span className="hidden sm:inline text-base">アップロード</span>
+              <span className="hidden sm:inline text-base">投稿</span>
             </Link>
           </nav>
         </div>

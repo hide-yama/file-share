@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NewsFlow - 大容量ファイル共有サービス",
-  description: "安全にファイルを共有",
+  title: "NewsFlow - 最新ニュース配信サービス",
+  description: "最新ニュースと情報をリアルタイムで配信",
 };
 
 export default function RootLayout({
