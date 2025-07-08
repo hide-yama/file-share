@@ -19,9 +19,9 @@
   - SUPABASE_SERVICE_ROLE_KEY=[設定済み]
 
   ## 本番環境
-  - ライブURL: https://ageruyo.vercel.app
+  - ライブURL: https://newsflow-jp.vercel.app
   - GitHubリポジトリ: https://github.com/hide-yama/file-share
-  - サービス名: AGERUYO - 大容量ファイル共有サービス
+  - サービス名: NewsFlow - 大容量ファイル共有サービス
 
   ## 再現手順書
   - REPRODUCIBLE_DEVELOPMENT_GUIDE.md 作成済み

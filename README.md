@@ -1,17 +1,17 @@
-# AGERUYO - 大容量ファイル共有サービス
+# NewsFlow - 大容量ファイル共有サービス
 
-![AGERUYO](https://img.shields.io/badge/AGERUYO-大容量ファイル共有-purple?style=for-the-badge)
+![NewsFlow](https://img.shields.io/badge/NewsFlow-大容量ファイル共有-purple?style=for-the-badge)
 ![Next.js](https://img.shields.io/badge/Next.js-15.3.3-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
 ![Supabase](https://img.shields.io/badge/Supabase-Backend-green?style=flat-square&logo=supabase)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat-square&logo=tailwind-css)
 ![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?style=flat-square&logo=vercel)
 
-**AGERUYO**は、美しいモダンUIと強力なセキュリティ機能を備えた次世代の大容量ファイル共有サービスです。
+**NewsFlow**は、美しいモダンUIと強力なセキュリティ機能を備えた次世代の大容量ファイル共有サービスです。
 
 ## 🌐 ライブデモ
 
-**本番環境**: [https://ageruyo.vercel.app](https://ageruyo.vercel.app)
+**本番環境**: [https://newsflow-jp.vercel.app](https://newsflow-jp.vercel.app)
 
 > 💡 実際のサービスをお試しいただけます！
 
@@ -268,10 +268,10 @@ Vercelダッシュボードで以下を設定:
 
 <div align="center">
 
-**AGERUYO** - 次世代の大容量ファイル共有体験
+**NewsFlow** - 次世代の大容量ファイル共有体験
 
 [![GitHub stars](https://img.shields.io/github/stars/hide-yama/file-share?style=social)](https://github.com/hide-yama/file-share/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/hide-yama/file-share?style=social)](https://github.com/hide-yama/file-share/network)
-[![Vercel Deploy](https://img.shields.io/badge/Deploy-Live-brightgreen?style=social&logo=vercel)](https://ageruyo.vercel.app)
+[![Vercel Deploy](https://img.shields.io/badge/Deploy-Live-brightgreen?style=social&logo=vercel)](https://newsflow-jp.vercel.app)
 
 </div>

@@ -16,7 +16,7 @@ export default function Home() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
           <h1 className="text-5xl sm:text-7xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent tracking-tight">
-            AGERUYO
+            NewsFlow
           </h1>
           <p className="mt-6 text-xl sm:text-2xl text-gray-700 font-light max-w-3xl mx-auto">
             ファイルもテキストも
@@ -72,7 +72,7 @@ export default function Home() {
 
         {/* Features Section */}
         <div className="mt-20 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12">AGERUYOの特徴</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-12">NewsFlowの特徴</h2>
           <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
             <div className="text-center p-4 sm:p-6 rounded-2xl bg-white/70 backdrop-blur-sm shadow-md border border-gray-100">
               <div className="mx-auto h-10 w-10 sm:h-14 sm:w-14 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 p-2 sm:p-3 shadow-md">

@@ -440,7 +440,7 @@ git push origin develop
 ## 🎯 実際の開発結果
 
 ### ✅ 完成したサービス
-- **ライブURL**: https://ageruyo.vercel.app
+- **ライブURL**: https://newsflow-jp.vercel.app
 - **リポジトリ**: https://github.com/hide-yama/file-share
 - **開発期間**: 1日（設計～デプロイまで）
 

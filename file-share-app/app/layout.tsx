@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AGERUYO - 大容量ファイル共有サービス",
+  title: "NewsFlow - 大容量ファイル共有サービス",
   description: "安全にファイルを共有",
 };
 

@@ -14,7 +14,7 @@ export default function Header() {
               </div>
             </div>
             <span className="font-bold text-lg sm:text-xl bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-              AGERUYO
+              NewsFlow
             </span>
           </Link>
           
