@@ -28,12 +28,16 @@ export function isFileAllowed(filename: string, mimeType?: string): boolean {
 }
 
 export function isFileSizeAllowed(size: number): boolean {
-  const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
+  // Supabase Free tier limit: 50MB per file
+  // Pro tier limit: 500GB per file
+  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB (Free tier limit)
   return size > 0 && size <= MAX_FILE_SIZE;
 }
 
 export function isProjectSizeAllowed(totalSize: number, newFileSize: number): boolean {
-  const MAX_PROJECT_SIZE = 2 * 1024 * 1024 * 1024; // 2GB (要件に合わせて変更)
+  // Supabase Free tier total storage: 1GB
+  // For safety, limit project size to 50GB even on free tier
+  const MAX_PROJECT_SIZE = 50 * 1024 * 1024 * 1024; // 50GB
   return (totalSize + newFileSize) <= MAX_PROJECT_SIZE;
 }
 

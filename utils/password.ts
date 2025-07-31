@@ -1,7 +1,15 @@
 import { generateRandomString } from './format';
 
-export function generatePassword(length: number = 12): string {
-  return generateRandomString(length);
+export function generatePassword(length: number = 4): string {
+  // 4文字の小文字アルファベットのみのパスワードを生成
+  const chars = 'abcdefghijklmnopqrstuvwxyz';
+  let result = '';
+  
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  
+  return result;
 }
 
 export function validatePassword(password: string): boolean {
@@ -9,11 +17,12 @@ export function validatePassword(password: string): boolean {
     return false;
   }
   
-  if (password.length < 8 || password.length > 128) {
+  // 4文字の小文字アルファベットのみを許可
+  if (password.length !== 4) {
     return false;
   }
   
-  const validChars = /^[a-zA-Z0-9]+$/;
+  const validChars = /^[a-z]+$/;
   return validChars.test(password);
 }
 

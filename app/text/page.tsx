@@ -26,11 +26,11 @@ export default function TextSharePage() {
   const [currentRoom, setCurrentRoom] = useState<TextRoom | null>(null);
   const supabase = createBrowserClient();
 
-  // Generate random room ID (12 characters for better uniqueness)
+  // Generate random room ID (4 characters, lowercase alphabet only)
   const generateRoomId = () => {
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const chars = 'abcdefghijklmnopqrstuvwxyz';
     let result = '';
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 4; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return result;

@@ -5,15 +5,16 @@ import { useRouter } from 'next/navigation';
 import { Upload, X, AlertTriangle, Cloud, Sparkles } from 'lucide-react';
 import { FileIcon, ErrorAlert, LoadingSpinner } from '@/components/common';
 import { formatFileSize } from '@/utils/format';
-// import { mockUpload } from '@/lib/mock-api';
+import { createBrowserClient } from '@/lib/supabase-client';
 
 export default function UploadPage() {
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
 
-  const MAX_TOTAL_SIZE = 2 * 1024 * 1024 * 1024; // 2GB
+  const MAX_TOTAL_SIZE = 50 * 1024 * 1024 * 1024; // 50GB (Supabase Free tier limit)
   
   const getTotalSize = () => {
     return files.reduce((total, file) => total + file.size, 0);
@@ -77,24 +78,85 @@ export default function UploadPage() {
     setError('');
     
     try {
-      const formData = new FormData();
-      
-      files.forEach(file => {
-        formData.append('files', file);
-      });
+      // Step 1: プロジェクトを作成してアップロード設定を取得
+      const fileInfos = files.map(file => ({
+        name: file.name,
+        size: file.size,
+        type: file.type
+      }));
 
-      const response = await fetch('/api/upload', {
+      const response = await fetch('/api/upload/direct', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ files: fileInfos })
       });
 
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error || 'アップロードに失敗しました');
+        throw new Error(result.error || 'プロジェクトの作成に失敗しました');
+      }
+
+      const { projectId, password, uploadConfigs } = result.data;
+      const supabase = createBrowserClient();
+      
+      // Step 2: 各ファイルを直接Supabase Storageにアップロード
+      const uploadedFiles = [];
+      const uploadErrors = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const config = uploadConfigs[i];
+        
+        try {
+          // プログレス追跡用のキーを設定
+          const progressKey = file.name;
+          setUploadProgress(prev => ({ ...prev, [progressKey]: 0 }));
+          
+          // Supabase Storageに直接アップロード
+          const { error: uploadError } = await supabase.storage
+            .from('project-files')
+            .upload(config.storagePath, file, {
+              cacheControl: '3600',
+              upsert: false
+            });
+          
+          if (uploadError) {
+            uploadErrors.push({ fileName: file.name, error: uploadError.message });
+          } else {
+            uploadedFiles.push({
+              name: config.fileName,
+              size: file.size,
+              url: `/api/download/${projectId}/${encodeURIComponent(config.fileName)}`
+            });
+            setUploadProgress(prev => ({ ...prev, [progressKey]: 100 }));
+          }
+        } catch (error) {
+          uploadErrors.push({ 
+            fileName: file.name, 
+            error: error instanceof Error ? error.message : 'アップロードエラー' 
+          });
+        }
       }
       
-      const queryParam = encodeURIComponent(JSON.stringify(result.data));
+      // エラーがある場合は報告
+      if (uploadErrors.length > 0) {
+        const errorMessages = uploadErrors.map(e => `${e.fileName}: ${e.error}`).join('\n');
+        throw new Error(`一部のファイルのアップロードに失敗しました:\n${errorMessages}`);
+      }
+      
+      // Step 3: 成功ページへ遷移
+      const successData = {
+        projectId,
+        password,
+        shareUrl: `${window.location.origin}/share/${projectId}`,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        files: uploadedFiles
+      };
+      
+      const queryParam = encodeURIComponent(JSON.stringify(successData));
       router.push(`/upload/success?data=${queryParam}`);
     } catch (error) {
       console.error('アップロードに失敗しました:', error);
@@ -161,7 +223,7 @@ export default function UploadPage() {
                   またはファイルをここにドラッグ&ドロップ
                 </p>
                 <p className="text-sm text-gray-500 bg-gray-50/80 backdrop-blur-sm inline-block px-4 py-2 rounded-full">
-                  最大{formatFileSize(MAX_TOTAL_SIZE)}まで（合計）
+                  最大{formatFileSize(MAX_TOTAL_SIZE)}まで（合計）※無料プラン
                 </p>
               </div>
             </div>
@@ -205,6 +267,20 @@ export default function UploadPage() {
                                 alt={file.name}
                                 className="w-24 h-24 object-cover rounded-xl border border-white/40 shadow-md"
                               />
+                            </div>
+                          )}
+                          {isUploading && uploadProgress[file.name] !== undefined && (
+                            <div className="mt-3">
+                              <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                                <span>アップロード中...</span>
+                                <span>{uploadProgress[file.name]}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                <div 
+                                  className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+                                  style={{ width: `${uploadProgress[file.name]}%` }}
+                                />
+                              </div>
                             </div>
                           )}
                         </div>
