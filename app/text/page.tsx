@@ -240,6 +240,11 @@ export default function TextSharePage() {
                       type="text"
                       value={roomId}
                       onChange={(e) => setRoomId(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && roomId) {
+                          joinRoom();
+                        }
+                      }}
                       placeholder="例: abc123def456"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                     />
