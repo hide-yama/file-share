@@ -128,8 +128,8 @@ export default function ShareProjectPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="block w-full rounded-xl border-0 bg-white/80 backdrop-blur-sm text-lg px-4 py-4 shadow-sm text-gray-800 font-mono text-center tracking-widest placeholder:text-gray-400"
-                    placeholder="12桁の英数字"
-                    maxLength={12}
+                    placeholder="4文字の英字"
+                    maxLength={4}
                     required
                     disabled={isLoading}
                   />
@@ -137,7 +137,7 @@ export default function ShareProjectPage() {
 
                 <button
                   type="submit"
-                  disabled={isLoading || password.length !== 12}
+                  disabled={isLoading || password.length !== 4}
                   className="group relative w-full inline-flex items-center justify-center px-8 py-4 overflow-hidden font-semibold transition duration-300 ease-out rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <span className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600"></span>
