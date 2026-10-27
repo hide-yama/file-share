@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { MessageSquare, Users, Copy, Check, RefreshCw } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { MessageSquare, Users, Copy, Check, ClipboardPaste } from 'lucide-react';
 import Header from '@/components/Header';
 import { createBrowserClient } from '@/lib/supabase-client';
 
@@ -21,9 +21,14 @@ export default function TextSharePage() {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [contentCopied, setContentCopied] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isCopying, setIsCopying] = useState(false);
+  const [pasted, setPasted] = useState(false);
+  const [isPasting, setIsPasting] = useState(false);
+  const [notice, setNotice] = useState('');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [currentRoom, setCurrentRoom] = useState<TextRoom | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const supabase = createBrowserClient();
 
   // Generate random room ID (4 characters, lowercase alphabet only)
@@ -84,78 +89,63 @@ export default function TextSharePage() {
     }
   };
 
-  // Manual refresh function
-  const refreshContent = async () => {
-    if (!roomId || !currentRoom) return;
-
-    setIsRefreshing(true);
-    try {
-      const { data, error } = await supabase
-        .from('text_rooms')
-        .select('*')
-        .eq('room_id', roomId)
-        .single();
-
-      if (error || !data) {
-        setError('最新データの取得に失敗しました');
-        return;
-      }
-
-      // Only update if content has changed
-      if (data.content !== content) {
-        setContent(data.content || '');
-        setCurrentRoom(data);
-      }
-      setLastUpdated(new Date());
-      setError(''); // Clear any previous errors
-    } catch {
-      setError('最新データの取得に失敗しました');
-    } finally {
-      setIsRefreshing(false);
+  // Fetch latest content from database (returns null on failure)
+  const fetchLatest = async (): Promise<string | null> => {
+    // Drop any pending save so it can't overwrite what we fetch
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
     }
+
+    const { data, error } = await supabase
+      .from('text_rooms')
+      .select('*')
+      .eq('room_id', roomId)
+      .single();
+
+    if (error || !data) {
+      setError('最新データの取得に失敗しました');
+      return null;
+    }
+
+    setContent(data.content || '');
+    setCurrentRoom(data);
+    setLastUpdated(new Date());
+    setError('');
+    return data.content || '';
   };
 
   // Update content in database
-  const updateContent = useCallback(async (newContent: string) => {
+  const saveContent = async (newContent: string) => {
     if (!currentRoom) return;
 
-    try {
-      await supabase
-        .from('text_rooms')
-        .update({ content: newContent, updated_at: new Date().toISOString() })
-        .eq('room_id', roomId);
-    } catch (error) {
-      console.error('Failed to update content:', error);
+    const { error } = await supabase
+      .from('text_rooms')
+      .update({ content: newContent, updated_at: new Date().toISOString() })
+      .eq('room_id', roomId);
+
+    if (error) {
+      setError('保存に失敗しました');
+      return;
     }
-  }, [currentRoom, roomId, supabase]);
+    setLastUpdated(new Date());
+    setError('');
+  };
 
-  // Set up real-time subscription
+  // Debounced save while typing, so out-of-order writes can't clobber newer text
+  const scheduleSave = (newContent: string) => {
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      saveTimerRef.current = null;
+      saveContent(newContent);
+    }, 500);
+  };
+
   useEffect(() => {
-    if (!isInRoom || !roomId) return;
-
-    const channel = supabase
-      .channel(`text_room_${roomId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'text_rooms',
-          filter: `room_id=eq.${roomId}`
-        },
-        (payload) => {
-          if (payload.new && typeof payload.new === 'object' && 'content' in payload.new && payload.new.content !== content) {
-            setContent(payload.new.content as string);
-            setLastUpdated(new Date());
-          }
-        }
-      )
-      .subscribe();
-
     return () => {
-      supabase.removeChannel(channel);
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     };
-  }, [isInRoom, roomId, supabase, content]);
+  }, []);
 
   // Copy room ID to clipboard
   const copyRoomId = () => {
@@ -164,11 +154,70 @@ export default function TextSharePage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Copy text content to clipboard
-  const copyContent = () => {
-    navigator.clipboard.writeText(content);
-    setContentCopied(true);
-    setTimeout(() => setContentCopied(false), 2000);
+  // コピ: fetch latest, then copy it to clipboard
+  const copyLatest = async () => {
+    setIsCopying(true);
+    try {
+      const latest = fetchLatest().then((text) => text ?? content);
+      if (typeof ClipboardItem !== 'undefined') {
+        // Hand the clipboard a promise so Safari keeps the click's user activation across the fetch
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'text/plain': latest.then((text) => new Blob([text], { type: 'text/plain' })),
+          }),
+        ]);
+      } else {
+        await navigator.clipboard.writeText(await latest);
+      }
+      setContentCopied(true);
+      setTimeout(() => setContentCopied(false), 2000);
+    } catch {
+      setError('クリップボードへのコピーに失敗しました');
+    } finally {
+      setIsCopying(false);
+    }
+  };
+
+  // ペ: replace content with clipboard text and save immediately
+  const pasteAndSave = async () => {
+    setError('');
+    // Chrome waits silently on a small permission bubble near the address bar until answered
+    const permission = await navigator.permissions
+      ?.query({ name: 'clipboard-read' as PermissionName })
+      .then((status) => status.state)
+      .catch(() => null);
+    if (permission === 'prompt') {
+      setNotice('ブラウザのアドレスバー付近に表示される「クリップボードの読み取り」を許可してください');
+    }
+
+    let text: string;
+    try {
+      text = await navigator.clipboard.readText();
+    } catch {
+      setError(
+        permission === 'denied'
+          ? 'クリップボードの読み取りがブロックされています。アドレスバー左のアイコンから許可するか、テキスト欄に直接貼り付けてください'
+          : 'クリップボードを読み取れませんでした。テキスト欄に直接貼り付けてください'
+      );
+      textareaRef.current?.focus();
+      return;
+    } finally {
+      setNotice('');
+    }
+
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+    setContent(text);
+    setIsPasting(true);
+    try {
+      await saveContent(text);
+      setPasted(true);
+      setTimeout(() => setPasted(false), 2000);
+    } finally {
+      setIsPasting(false);
+    }
   };
 
   // Format last updated time
@@ -293,35 +342,57 @@ export default function TextSharePage() {
             </button>
           </div>
 
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
+            </div>
+          )}
+
+          {notice && (
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
+              {notice}
+            </div>
+          )}
+
           <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium text-gray-700">
                   共有テキスト
                 </label>
-                <button
-                  onClick={copyContent}
-                  disabled={!content}
-                  className="flex items-center gap-2 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                  title={contentCopied ? 'コピーしました' : 'テキストをコピー'}
-                >
-                  {contentCopied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4 text-gray-600" />}
-                  <span className="text-gray-600">
-                    {contentCopied ? 'コピーしました' : 'コピー'}
-                  </span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={copyLatest}
+                    disabled={isCopying}
+                    className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    title="最新を取得してコピー"
+                  >
+                    {contentCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    コピ
+                  </button>
+                  <button
+                    onClick={pasteAndSave}
+                    disabled={isPasting}
+                    className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    title="クリップボードの内容で置き換えて保存"
+                  >
+                    {pasted ? <Check className="h-4 w-4" /> : <ClipboardPaste className="h-4 w-4" />}
+                    ペ
+                  </button>
+                </div>
               </div>
               <textarea
+                ref={textareaRef}
                 value={content}
                 onChange={(e) => {
                   setContent(e.target.value);
-                  updateContent(e.target.value);
+                  scheduleSave(e.target.value);
                 }}
-                placeholder="ここにテキストを入力すると、同じルームの全員にリアルタイムで共有されます..."
+                placeholder="「ペ」でクリップボードの内容を共有、相手は「コピ」で最新を取得してコピーできます"
                 className="w-full h-96 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none"
               />
             </div>
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-4">
               <div className="text-sm text-gray-600">
                 <Users className="inline h-4 w-4 mr-1" />
                 このルームで編集中
@@ -331,14 +402,6 @@ export default function TextSharePage() {
                   </span>
                 )}
               </div>
-              <button
-                onClick={refreshContent}
-                disabled={isRefreshing}
-                className="flex items-center px-3 py-2 text-sm bg-white/60 backdrop-blur-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 hover:bg-white/80 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-                {isRefreshing ? '更新中...' : '最新に更新'}
-              </button>
             </div>
           </div>
         </div>
