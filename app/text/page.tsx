@@ -362,15 +362,6 @@ export default function TextSharePage() {
                 </label>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={copyLatest}
-                    disabled={isCopying}
-                    className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                    title="最新を取得してコピー"
-                  >
-                    {contentCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    コピ
-                  </button>
-                  <button
                     onClick={pasteAndSave}
                     disabled={isPasting}
                     className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
@@ -378,6 +369,15 @@ export default function TextSharePage() {
                   >
                     {pasted ? <Check className="h-4 w-4" /> : <ClipboardPaste className="h-4 w-4" />}
                     ペ
+                  </button>
+                  <button
+                    onClick={copyLatest}
+                    disabled={isCopying}
+                    className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    title="最新を取得してコピー"
+                  >
+                    {contentCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    コピ
                   </button>
                 </div>
               </div>
